@@ -6,12 +6,12 @@ from config import APPID
 GEOCODING_API_URL = "http://api.openweathermap.org/geo/1.0/direct"
 
 
-async def get_geocoding(country: str, code: str):
+async def get_geocoding(city: str, country_code: str):
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(
                 GEOCODING_API_URL,
-                params={"q": f"{country},{code}", "appid": str(APPID)},
+                params={"q": f"{city},{country_code}", "appid": str(APPID)},
             )
             response.raise_for_status()
             return response.json()
