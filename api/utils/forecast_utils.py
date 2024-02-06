@@ -29,9 +29,14 @@ async def get_forecast(
                 },
             )
             response.raise_for_status()
-            return response.json()
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 status_code=e.response.status_code,
                 detail=str(e),
             )
+        # for handling connection timeouts or DNS failures
+        except httpx.RequestError:
+            raise HTTPException(
+                status_code=503, detail="Temprarily unavailable, try later"
+            )
+        return response.json()

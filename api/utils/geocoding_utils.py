@@ -14,9 +14,14 @@ async def get_geocoding(city: str, country_code: str):
                 params={"q": f"{city},{country_code}", "appid": str(APPID)},
             )
             response.raise_for_status()
-            return response.json()
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 status_code=e.response.status_code,
                 detail=str(e),
             )
+        # for handling connection timeouts or DNS failures
+        except httpx.RequestError:
+            raise HTTPException(
+                status_code=503, detail="Temprarily unavailable, try later"
+            )
+        return response.json()
